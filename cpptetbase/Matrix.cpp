@@ -83,7 +83,7 @@ Matrix *Matrix::clip(int top, int left, int bottom, int right) {
   return temp;
 }
 
-void Matrix::paste(const Matrix *obj, int top, int left) {
+void Matrix::paste(const Matrix *obj, int top, int left) { //뒤에 두 인자는 윗부분어디, 왼쪽어디에 paste할지 결정해주는 것임
   for (int y = 0; y < obj->dy; y++)
     for (int x = 0; x < obj->dx; x++) {
       if ((top + y >= 0) && (left + x >= 0) &&

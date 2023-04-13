@@ -166,14 +166,55 @@ void drawScreen(Matrix *screen, int wall_depth)
       else if (array[y][x] == 70)
 	      cout << "♥ ";
       else
-	      cout << "X ";
+	      cout << "XX";
     }
     cout << endl;
   }
 }
 
-void deleteFullLines(Matrix *screen){
-  
+// void deleteFullLines(Matrix *screen){
+//   int left=3; int right=13;
+//   int zeroo[]={0,0,0,0,0,0,0,0,0,0};
+//   Matrix *zero= new Matrix(zeroo,10,1);
+//   for (int top=0; top<10; top++){
+//     Matrix *checkBLk=screen->clip(top, left, top+1, right);
+//     int s=checkBLk->sum();
+//     if (s==10){
+//       checkBLk->paste(zero,top,left);
+//       delete zero;
+//       screen->paste(checkBLk,top,left);
+//       delete checkBLk;
+
+//       checkBLk=screen->clip(0, left, top-1, right);
+      
+//       screen->paste(checkBLk, top, left);
+//       delete checkBLk;
+//       checkBLk=nullptr;
+//     }
+//     else s=0;
+//   }
+//   delete zero;
+// }
+
+void deleteFullLines(Matrix *screen){ //sum밑줄부터 확인하기
+  int left=3; int right=13;
+  int zeroo[]={0,0,0,0,0,0,0,0,0,0};
+  Matrix *zero= new Matrix(zeroo,10,1);
+  for (int top=10; top>0; top--){
+    Matrix *checkBLk=screen->clip(top-1, left, top, right);
+    int s=checkBLk->sum();
+    if (s==10){
+      delete checkBLk;
+      checkBLk=screen->clip(0, left, top-1, right);
+      screen->paste(zero, 0, left); //0번째 행 0으로
+      screen->paste(checkBLk, 1, left); //paste를 한 줄 내려서
+    }
+    else s=0;
+    delete checkBLk;
+    checkBLk=nullptr; 
+  }
+  delete zero;
+  zero=nullptr;
 }
   
 /**************************************************************/
@@ -214,7 +255,7 @@ int main(int argc, char *argv[]) {
   char key;
   int blkType;
   int top = 0, left = 4;
-  int crash=0;
+  int crash=0; //충돌확인 변수
   Matrix *setOfBlockObjects[7][4];
   srand((unsigned int)time(NULL));
 
@@ -247,13 +288,12 @@ int main(int argc, char *argv[]) {
 
   Matrix *iScreen = new Matrix((int *) arrayScreen, ARRAY_DY, ARRAY_DX);
   Matrix *currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];
-  Matrix *tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx());
+  Matrix *tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx()); //아무것도 없는 iscreen에서 curr만한 블럭 뜯어내기
   Matrix *tempBlk2 = tempBlk->add(currBlk); //(5,4)일때 tempBlk란 add된 새로운 객체생성, 이전 객체의 주소값이 없어져 잃어버림-> 새로운 객체를 tempBlk2로 바꿈
+  delete tempBlk; 
   /*Matrix W, X, Y, Z;
   Z=X+Y+W; //add를 여러개 한번에, 코드 짧아짐 굿*/
   // *tempBlk2= *tempBlk + *currBlk; //힙할당을 했기 때문에 포인트변수 , 깔끔하려면 스택할당
-
-  delete tempBlk; 
 
   Matrix *oScreen = new Matrix(iScreen);
   oScreen->paste(tempBlk2, top, left);
@@ -266,7 +306,7 @@ int main(int argc, char *argv[]) {
       case 'a': left--; break;
       case 'd': left++; break;
       case 's': top++; break;
-      case 'w': idxBlockDegree=(idxBlockDegree+1) % 4; currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree]; break;
+      case 'w': {idxBlockDegree=(idxBlockDegree+1) % 4; currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];} break;
       case ' ': while(1){
                   top++;
                   tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx());
@@ -279,7 +319,7 @@ int main(int argc, char *argv[]) {
     }
     tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx()); //hard drop말고 다른 case출력들
     tempBlk2 = tempBlk->add(currBlk);
-
+    delete tempBlk;
 
     if (tempBlk2->anyGreaterThan(1)){
       switch (key) {
@@ -288,31 +328,31 @@ int main(int argc, char *argv[]) {
         case 's': {crash=1;
                    top--;
                   } break;
-        case 'w': break;
+        case 'w': {idxBlockDegree=(idxBlockDegree+3) % 4; //돌면서 충돌할때 충돌하면 반대로 돌리기
+                  currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];} break;
         case ' ': {crash=1;
                   top--;
                   oScreen = new Matrix(iScreen);
                   oScreen->paste(tempBlk2, top, left);
                   delete tempBlk2;
-                  //drawScreen(oScreen, SCREEN_DW);
                 } 
                   break;
       }
       tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx()); //방향키 누르면 움직이도록!
       tempBlk2 = tempBlk->add(currBlk);
-    
+      delete tempBlk;
     }
-    delete tempBlk;
 
     oScreen = new Matrix(iScreen);
     oScreen->paste(tempBlk2, top, left);
     delete tempBlk2;
     drawScreen(oScreen, SCREEN_DW); //테트리스 블럭출현
 
-    if(crash>0){
+    if(crash>0){ //새로운 블럭 생성
       idxBlockDegree= rand() %MAX_BLK_DEGREES;
       idxBlockType= rand() %MAX_BLK_TYPES;
       currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];
+      deleteFullLines(oScreen);
       iScreen= new Matrix(oScreen);
       top=0; left=4;
       tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx());
@@ -320,27 +360,37 @@ int main(int argc, char *argv[]) {
       delete tempBlk;
       delete oScreen;
       if (tempBlk2->anyGreaterThan(1)){
-          delete tempBlk2;
+          oScreen = new Matrix(iScreen);
+          oScreen->paste(tempBlk2, top, left);
+          drawScreen(oScreen, SCREEN_DW);
           cout << "Game over" << endl;
+          delete tempBlk2;
+          goto skip;
+          
       }
       oScreen = new Matrix(iScreen);
       oScreen->paste(tempBlk2, top, left);
       delete tempBlk2;
+     
       drawScreen(oScreen, SCREEN_DW);
+      
       crash=0; //다른 케이스에서 안걸리게 초기화!!!!!!!!!!
+      
     }
   }
-  delete oScreen;
-  delete iScreen;
-  delete currBlk;
-  // delete tempBlk;
-  //delete tempBlk2; //(5,5)나오도록 수정
-  //delete oScreen;
 
-  cout << "(nAlloc, nFree) = (" << Matrix::get_nAlloc() << ',' << Matrix::get_nFree() << ")" << endl;  
-  cout << "Program terminated!" << endl;
+  skip:
+    delete iScreen;
+    for (int t=0; t<MAX_BLK_TYPES; t++){
+      for (int d=0; d<MAX_BLK_DEGREES; d++){
+        delete setOfBlockObjects[t][d];
+      }
+    }
+    cout << "(nAlloc, nFree) = (" << Matrix::get_nAlloc() << ',' << Matrix::get_nFree() << ")" << endl;  
+    cout << "Program terminated!" << endl;
 
 
   return 0;
 }
 
+ 
