@@ -322,13 +322,11 @@ int main(int argc, char *argv[]) {
     oScreen->paste(tempBlk2, top, left);
     delete tempBlk2;
     drawScreen(oScreen, SCREEN_DW); //테트리스 블럭출현
-    //delete oScreen;
 
     if(crash>0){ //새로운 블럭 생성
       idxBlockDegree= rand() %MAX_BLK_DEGREES;
       idxBlockType= rand() %MAX_BLK_TYPES;
       currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];
-
       deleteFullLines(oScreen);
       delete iScreen;
       iScreen= new Matrix(oScreen);
@@ -344,8 +342,7 @@ int main(int argc, char *argv[]) {
           delete oScreen;
           cout << "Game over" << endl;
           delete tempBlk2;
-          goto skip;
-          
+          goto skip;  
       }
       oScreen = new Matrix(iScreen);
       oScreen->paste(tempBlk2, top, left);
