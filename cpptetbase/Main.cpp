@@ -175,15 +175,15 @@ void drawScreen(Matrix *screen, int wall_depth)
 void deleteFullLines(Matrix *screen){ //sum밑줄부터 확인하기
   int left=3; int right=13;
   int zeroo[]={0,0,0,0,0,0,0,0,0,0};
-  Matrix *zero= new Matrix(zeroo,10,1);
+  Matrix *zero= new Matrix(zeroo,1,10);
   for (int top=10; top>0; top--){
     Matrix *checkBLk=screen->clip(top-1, left, top, right);
     int s=checkBLk->sum();
     if (s==10){
       delete checkBLk;
       checkBLk=screen->clip(0, left, top-1, right);
-      screen->paste(zero, 0, left); //0번째 행 0으로
       screen->paste(checkBLk, 1, left); //paste를 한 줄 내려서
+      screen->paste(zero, 0, left); //0번째 행 0으로
     }
     delete checkBLk;
     checkBLk=nullptr; 
