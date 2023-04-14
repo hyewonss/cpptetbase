@@ -172,30 +172,6 @@ void drawScreen(Matrix *screen, int wall_depth)
   }
 }
 
-// void deleteFullLines(Matrix *screen){
-//   int left=3; int right=13;
-//   int zeroo[]={0,0,0,0,0,0,0,0,0,0};
-//   Matrix *zero= new Matrix(zeroo,10,1);
-//   for (int top=0; top<10; top++){
-//     Matrix *checkBLk=screen->clip(top, left, top+1, right);
-//     int s=checkBLk->sum();
-//     if (s==10){
-//       checkBLk->paste(zero,top,left);
-//       delete zero;
-//       screen->paste(checkBLk,top,left);
-//       delete checkBLk;
-
-//       checkBLk=screen->clip(0, left, top-1, right);
-      
-//       screen->paste(checkBLk, top, left);
-//       delete checkBLk;
-//       checkBLk=nullptr;
-//     }
-//     else s=0;
-//   }
-//   delete zero;
-// }
-
 void deleteFullLines(Matrix *screen){ //sum밑줄부터 확인하기
   int left=3; int right=13;
   int zeroo[]={0,0,0,0,0,0,0,0,0,0};
@@ -209,7 +185,6 @@ void deleteFullLines(Matrix *screen){ //sum밑줄부터 확인하기
       screen->paste(zero, 0, left); //0번째 행 0으로
       screen->paste(checkBLk, 1, left); //paste를 한 줄 내려서
     }
-    else s=0;
     delete checkBLk;
     checkBLk=nullptr; 
   }
@@ -312,8 +287,10 @@ int main(int argc, char *argv[]) {
                   tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx());
                   tempBlk2 = tempBlk->add(currBlk);
                   delete tempBlk;
-                  if(tempBlk2->anyGreaterThan(1)) break;
-                }       
+                  if(tempBlk2->anyGreaterThan(1))  break;
+                  delete tempBlk2;
+                }
+                delete tempBlk2;  
                 break;
       default: cout << "wrong key input" << endl;
     }
@@ -322,6 +299,7 @@ int main(int argc, char *argv[]) {
     delete tempBlk;
 
     if (tempBlk2->anyGreaterThan(1)){
+      delete tempBlk2;
       switch (key) {
         case 'a': left++; break; //벽에 충돌하면 블록의 값이 바뀌는(빈상자에서 겹치면 1, 채워진 상자에서 겹치면 2됨) 걸 이용해 벽에 충돌하면 제자리로 돌려줌
         case 'd': left--; break;
@@ -332,9 +310,6 @@ int main(int argc, char *argv[]) {
                   currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];} break;
         case ' ': {crash=1;
                   top--;
-                  oScreen = new Matrix(iScreen);
-                  oScreen->paste(tempBlk2, top, left);
-                  delete tempBlk2;
                 } 
                   break;
       }
@@ -347,12 +322,15 @@ int main(int argc, char *argv[]) {
     oScreen->paste(tempBlk2, top, left);
     delete tempBlk2;
     drawScreen(oScreen, SCREEN_DW); //테트리스 블럭출현
+    //delete oScreen;
 
     if(crash>0){ //새로운 블럭 생성
       idxBlockDegree= rand() %MAX_BLK_DEGREES;
       idxBlockType= rand() %MAX_BLK_TYPES;
       currBlk = setOfBlockObjects[idxBlockType][idxBlockDegree];
+
       deleteFullLines(oScreen);
+      delete iScreen;
       iScreen= new Matrix(oScreen);
       top=0; left=4;
       tempBlk = iScreen->clip(top, left, top + currBlk->get_dy(), left + currBlk->get_dx());
@@ -363,6 +341,7 @@ int main(int argc, char *argv[]) {
           oScreen = new Matrix(iScreen);
           oScreen->paste(tempBlk2, top, left);
           drawScreen(oScreen, SCREEN_DW);
+          delete oScreen;
           cout << "Game over" << endl;
           delete tempBlk2;
           goto skip;
@@ -371,20 +350,22 @@ int main(int argc, char *argv[]) {
       oScreen = new Matrix(iScreen);
       oScreen->paste(tempBlk2, top, left);
       delete tempBlk2;
-     
       drawScreen(oScreen, SCREEN_DW);
-      
+      delete oScreen;
       crash=0; //다른 케이스에서 안걸리게 초기화!!!!!!!!!!
       
     }
+    else delete oScreen;
   }
+
+  
 
   skip:
     delete iScreen;
     for (int t=0; t<MAX_BLK_TYPES; t++){
       for (int d=0; d<MAX_BLK_DEGREES; d++){
         delete setOfBlockObjects[t][d];
-      }
+      } //setOfBlockObjects 배열(28개 객체들을 가리키는 포인터 배열)을 이용해서 28개 객체를 소멸시키면, 당연히 currBlk 이 가리키는 객체(28개 중의 하나)도 당연히 소멸됨
     }
     cout << "(nAlloc, nFree) = (" << Matrix::get_nAlloc() << ',' << Matrix::get_nFree() << ")" << endl;  
     cout << "Program terminated!" << endl;
