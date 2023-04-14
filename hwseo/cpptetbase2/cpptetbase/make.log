@@ -1,0 +1,206 @@
+g++ -c -o Main.o Main.cpp -g -I. -fpermissive
+Main.cpp: In function ‘int main(int, char**)’:
+Main.cpp:215:13: error: no match for ‘operator+’ (operand types are ‘const Matrix’ and ‘Matrix’)
+   D = A + B + C;
+       ~~~~~~^~~
+In file included from Main.cpp:13:0:
+Matrix.h:31:16: note: candidate: const Matrix Matrix::operator+(const Matrix&) <near match>
+   const Matrix operator+(const Matrix& m2);
+                ^~~~~~~~
+Matrix.h:31:16: note:   passing ‘const Matrix*’ as ‘this’ argument discards qualifiers
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/char_traits.h:39,
+                 from /usr/include/c++/7/ios:40,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:400:5: note: candidate: template<class _Iterator> std::reverse_iterator<_Iterator> std::operator+(typename std::reverse_iterator<_Iterator>::difference_type, const std::reverse_iterator<_Iterator>&)
+     operator+(typename reverse_iterator<_Iterator>::difference_type __n,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:400:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘Matrix’ is not derived from ‘const std::reverse_iterator<_Iterator>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/bits/stl_algobase.h:67:0,
+                 from /usr/include/c++/7/bits/char_traits.h:39,
+                 from /usr/include/c++/7/ios:40,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/stl_iterator.h:1201:5: note: candidate: template<class _Iterator> std::move_iterator<_IteratorL> std::operator+(typename std::move_iterator<_IteratorL>::difference_type, const std::move_iterator<_IteratorL>&)
+     operator+(typename move_iterator<_Iterator>::difference_type __n,
+     ^~~~~~~~
+/usr/include/c++/7/bits/stl_iterator.h:1201:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘Matrix’ is not derived from ‘const std::move_iterator<_IteratorL>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5888:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5888:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘const Matrix’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:53:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.tcc:1157:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const _CharT*, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator+(const _CharT* __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.tcc:1157:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   mismatched types ‘const _CharT*’ and ‘Matrix’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:53:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.tcc:1173:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(_CharT, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator+(_CharT __lhs, const basic_string<_CharT, _Traits, _Alloc>& __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.tcc:1173:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘Matrix’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5925:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, const _CharT*)
+     operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5925:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘const Matrix’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5941:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, _CharT)
+     operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs, _CharT __rhs)
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5941:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘const Matrix’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5953:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&, const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&)
+     operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5953:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   types ‘std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’ and ‘const Matrix’ have incompatible cv-qualifiers
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5959:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&, std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&)
+     operator+(const basic_string<_CharT, _Traits, _Alloc>& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5959:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘const Matrix’ is not derived from ‘const std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5965:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&, std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&)
+     operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5965:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   types ‘std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’ and ‘const Matrix’ have incompatible cv-qualifiers
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5977:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(const _CharT*, std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&)
+     operator+(const _CharT* __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5977:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   mismatched types ‘const _CharT*’ and ‘Matrix’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5983:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(_CharT, std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&)
+     operator+(_CharT __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5983:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   ‘Matrix’ is not derived from ‘std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5989:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&, const _CharT*)
+     operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5989:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   types ‘std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’ and ‘const Matrix’ have incompatible cv-qualifiers
+   D = A + B + C;
+               ^
+In file included from /usr/include/c++/7/string:52:0,
+                 from /usr/include/c++/7/bits/locale_classes.h:40,
+                 from /usr/include/c++/7/bits/ios_base.h:41,
+                 from /usr/include/c++/7/ios:42,
+                 from /usr/include/c++/7/ostream:38,
+                 from /usr/include/c++/7/iostream:39,
+                 from Main.cpp:1:
+/usr/include/c++/7/bits/basic_string.h:5995:5: note: candidate: template<class _CharT, class _Traits, class _Alloc> std::__cxx11::basic_string<_CharT, _Traits, _Alloc> std::operator+(std::__cxx11::basic_string<_CharT, _Traits, _Alloc>&&, _CharT)
+     operator+(basic_string<_CharT, _Traits, _Alloc>&& __lhs,
+     ^~~~~~~~
+/usr/include/c++/7/bits/basic_string.h:5995:5: note:   template argument deduction/substitution failed:
+Main.cpp:215:15: note:   types ‘std::__cxx11::basic_string<_CharT, _Traits, _Alloc>’ and ‘const Matrix’ have incompatible cv-qualifiers
+   D = A + B + C;
+               ^
+Makefile:18: recipe for target 'Main.o' failed
+make: *** [Main.o] Error 1

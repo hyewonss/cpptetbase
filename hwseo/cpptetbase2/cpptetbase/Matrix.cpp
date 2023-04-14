@@ -7,14 +7,20 @@ int Matrix::get_nAlloc() { return nAlloc; }
 
 int Matrix::get_nFree() { return nFree; }
 
-int Matrix::get_dy() { return dy; }
+int Matrix::get_dy() const { return dy; }
 
-int Matrix::get_dx() { return dx; }
+int Matrix::get_dx() const { return dx; }
 
-int **Matrix::get_array() { return array; }
+int **Matrix::get_array() const { return array; }
 
 void Matrix::alloc(int cy, int cx) {
-  if ((cy < 0) || (cx < 0)) return;
+  if ((cy <= 0) || (cx <= 0)) {
+	dy = 0;
+	dx = 0;
+	array = NULL;
+    nAlloc++;
+    return;
+  }
   dy = cy;
   dx = cx;
   array = new int*[dy];
@@ -29,13 +35,18 @@ void Matrix::alloc(int cy, int cx) {
 
 Matrix::Matrix() { alloc(0, 0); }
 
-Matrix::~Matrix() { 
-  for (int y = 0; y < dy; y++)
-    delete array[y];
-  delete array;
+void Matrix::dealloc() { 
+  if (array != NULL) {
+    for (int y = 0; y < dy; y++)
+      delete[] array[y];
+    delete[] array;
+    array = NULL;
+  }
 
   nFree++;
 }
+
+Matrix::~Matrix() { dealloc(); }
 
 Matrix::Matrix(int cy, int cx) {
   alloc(cy, cx);
@@ -72,26 +83,56 @@ Matrix *Matrix::clip(int top, int left, int bottom, int right) {
   for (int y = 0; y < cy; y++) {
     for (int x = 0; x < cx; x++) {
       if ((top + y >= 0) && (left + x >= 0) &&
-	  (top + y < dy) && (left + x < dx))
-	temp->array[y][x] = array[top + y][left + x];
+	      (top + y < dy) && (left + x < dx))
+      	temp->array[y][x] = array[top + y][left + x];
       else {
-	cerr << "invalid matrix range";
-	return NULL;
+      	cerr << "invalid matrix range";
+        delete temp;
+      	return NULL;
       }
     }
   }
   return temp;
 }
 
-void Matrix::paste(const Matrix *obj, int top, int left) { //뒤에 두 인자는 윗부분어디, 왼쪽어디에 paste할지 결정해주는 것임
+Matrix Matrix::clip_(int top, int left, int bottom, int right) {
+  int cy = bottom - top;
+  int cx = right - left;
+  Matrix temp(cy, cx);
+  for (int y = 0; y < cy; y++) {
+    for (int x = 0; x < cx; x++) {
+      if ((top + y >= 0) && (left + x >= 0) &&
+	      (top + y < dy) && (left + x < dx))
+      	temp.array[y][x] = array[top + y][left + x];
+      else {
+      	cerr << "invalid matrix range";
+      	return Matrix();
+      }
+    }
+  }
+  return temp;
+}
+
+void Matrix::paste(const Matrix *obj, int top, int left) {
   for (int y = 0; y < obj->dy; y++)
     for (int x = 0; x < obj->dx; x++) {
       if ((top + y >= 0) && (left + x >= 0) &&
-	  (top + y < dy) && (left + x < dx))
-	array[y + top][x + left] = obj->array[y][x];
+	      (top + y < dy) && (left + x < dx))
+	      array[y + top][x + left] = obj->array[y][x];
       else {
-	cerr << "invalid matrix range";
-	return NULL;
+	      cerr << "invalid matrix range";
+      }
+    }
+}
+
+void Matrix::paste(const Matrix &obj, int top, int left) {
+  for (int y = 0; y < obj.dy; y++)
+    for (int x = 0; x < obj.dx; x++) {
+      if ((top + y >= 0) && (left + x >= 0) &&
+	      (top + y < dy) && (left + x < dx))
+	      array[y + top][x + left] = obj.array[y][x];
+      else {
+	      cerr << "invalid matrix range";
       }
     }
 }
@@ -105,22 +146,22 @@ Matrix *Matrix::add(const Matrix *obj) {
   return temp;
 }
 
-const Matrix operator+(const Matrix& m1, const Matrix& m2){
+const Matrix operator+(const Matrix& m1, const Matrix& m2) { // friend function version of operator+ overloading
   if ((m1.dx != m2.dx) || (m1.dy != m2.dy)) return Matrix();
   Matrix temp(m1.dy, m1.dx);
-  for (int y=0; y<m1.dy; y++)
-    for (int x=0; x<m1.dx; x++)
-      temp.array[y][x]=m1.array[y][x]+m2.array[y][x];
-  return temp;
+  for (int y = 0; y < m1.dy; y++)
+    for (int x = 0; x < m1.dx; x++)
+      temp.array[y][x] = m1.array[y][x] + m2.array[y][x];
+  return temp;  
 }
 
-// Matrix Matrix::operator+ (const Matrix& m2){         //::Martix함수의 멤버란뜻 member fuction version of operator
+// const Matrix Matrix::operator+(const Matrix& m2) const  { // member function version of operator+ overloading
 //   if ((dx != m2.dx) || (dy != m2.dy)) return Matrix();
-//   Matrix temp(dy,dx); //스택할당
-//   for (int y=0; y<dy; y++)
-//     for (int x=0; x<dx; x++)
+//   Matrix temp(dy, dx);
+//   for (int y = 0; y < dy; y++)
+//     for (int x = 0; x < dx; x++)
 //       temp.array[y][x] = array[y][x] + m2.array[y][x];
-//   return temp;
+//   return temp;  
 // }
 
 int Matrix::sum() {
@@ -181,12 +222,12 @@ ostream& operator<<(ostream& out, const Matrix& obj){
 Matrix& Matrix::operator=(const Matrix& obj)
 {
   if (this == &obj) return *this;
-  if ((dx != obj.dx) || (dy != obj.dy))
+  if ((dx != obj.dx) || (dy != obj.dy)) {
+    if (array != NULL) dealloc();
     alloc(obj.dy, obj.dx);
-
+  }
   for (int y = 0; y < dy; y++)
     for (int x = 0; x < dx; x++)
       array[y][x] = obj.array[y][x];
   return *this;
 }
-//바꾼 코드? alloc을 해야 메모리누수 막을 수 있음
