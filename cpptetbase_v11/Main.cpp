@@ -244,7 +244,7 @@ Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int left, int dw
 {
   Matrix *line, *bline, *zero, *czero;
   int *rdel, *cdel;
-  int cy, y, cx ,x, r, c;
+  int cy, y, cx ,x;
   int nScanned, cnScanned;
   int ws_dy = screen->get_dy() - 2*dw;
   int ws_dx = screen->get_dx() - 2*dw;
