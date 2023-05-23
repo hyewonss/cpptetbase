@@ -146,14 +146,8 @@ void drawScreen(Matrix *screen, int wall_depth)
   int dw = wall_depth;
   int **array = screen->get_array();
 
-  for (int x = 0; x < dx - 2*dw; x++) {
-    string digit = "0" + to_string(x) + " ";
-    cout << digit;
-  }
-  cout << endl;
-
-  for (int y = dw; y < dy - dw; y++) {
-    for (int x = dw; x < dx - dw; x++) {
+  for (int y = 0; y < dy - dw + 1; y++) {
+    for (int x = dw - 1; x < dx - dw + 1; x++) {
       if (array[y][x] == 0)
 	      cout << "□ ";
       else if (array[y][x] == 1)
@@ -173,10 +167,9 @@ void drawScreen(Matrix *screen, int wall_depth)
       else if (array[y][x] == 70)
 	      cout << "♥ ";
       else
-	      cout << "XX";
+	      cout << "XX ";
     }
-    string digit = "0" + to_string(y-dw) + " ";
-    cout << digit << endl;
+    cout << endl;
   }
 }
   
@@ -184,114 +177,13 @@ void drawScreen(Matrix *screen, int wall_depth)
 /******************** Tetris Main Loop ************************/
 /**************************************************************/
 
-class MyOnLeft : public ActionHandler {
-public:
-    void run(Tetris *t, char key) {
-        if (t->left > 0)
-          t->left--;
-        return;
-    }
-};
-
-class MyOnRight : public ActionHandler {
-public:
-    void run(Tetris *t, char key) {
-        if (t->left<14)
-          t->left++;
-        return;
-    }
-};
-
-class MyOnDown : public ActionHandler{
-public:
-    void run(Tetris *t, char key){
-      if (t->top<14)
-        t->top++;
-      return;
-    }
-};
-
-class MyOnUp : public ActionHandler{
-public:
-    void run(Tetris *t, char ket){
-      if (t->top>0)
-        t->top--;
-      return;
-    }
-};
-
-class MyOnFix : public ActionHandler{
-public:
-    void run(Tetris *t, char key){
-      Matrix *tempBlk;
-      tempBlk = t->overlap_currBlk();
-      if (anyConflict(tempBlk) == true){
-        delete tempBlk;
-      }
-      delete tempBlk;
-      return;
-    }
-};
-
-class MyDummy : public ActionHandler {
-public:
-    void run(Tetris *t, char key) {
-        return;
-    }
-};
-
-class MyOnNewBlock : public ActionHandler {
-public:
-    void run(Tetris *t, char key) {
-        if (t->currBlk != NULL) // why test currBlk != NULL?
-            t->oScreen = deleteFullLines(t->oScreen, t->currBlk, t->top, t->wallDepth);
-        t->iScreen->paste(t->oScreen, 0, 0);
-        // select a new block
-        t->type = key - '0';
-        t->degree = 0;
-        t->top = t->wallDepth; 
-        t->left = t->cols/2 - t->wallDepth/2;
-        t->currBlk = t->setOfBlockObjects[t->type][t->degree];
-        return;
-    }    
-};
-
-Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int dw){
-  Matrix *line, *bline, *zero, *temp;
-  int cy, y;
-  int nDeleted, nScanned;
-  int ws_dy = screen->get_dy() - 2*dw;
-  int ws_dx = screen->get_dx() - 2*dw;
-
-  
-}
-
 int main(int argc, char *argv[]) {
   char key;
-  // registerAlarm(); // register one-second timer
+  registerAlarm(); // register one-second timer
   srand((unsigned int)time(NULL)); // init the random number generator
   
   TetrisState state;
   Tetris::init(setOfBlockArrays, MAX_BLK_TYPES, MAX_BLK_DEGREES);
-  
-  /////////////////////////////////////////////////////////////////////////
-  /// Plug-in architecture for generalized Tetris class
-  /////////////////////////////////////////////////////////////////////////
-  Tetris::setOperation('a', TetrisState::Running, new MyOnLeft(),    TetrisState::Running, new MyDummy(), TetrisState::Running);
-  Tetris::setOperation('d', TetrisState::Running, new MyOnRight(), TetrisState::Running, new MyDummy(),    TetrisState::Running);
-  Tetris::setOperation('s', TetrisState::Running, new MyOnDown(), TetrisState::Running, new MyDummy(),     TetrisState::Running);
-  Tetris::setOperation('w', TetrisState::Running,  new OnClockWise(),    TetrisState::Running, new MyDummy(),  TetrisState::Running);
-  Tetris::setOperation('e', TetrisState::Running, new MyOnUp(), TetrisState::Running, new MyDummy(),     TetrisState::Running);
-  Tetris::setOperation(' ', TetrisState::Running, new MyOnFix(),   TetrisState::NewBlock, new OnFinished(),     TetrisState::Running);
-  Tetris::setOperation('0', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('1', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('2', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('3', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('4', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('5', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  Tetris::setOperation('6', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
-  /////////////////////////////////////////////////////////////////////////
-
   Tetris *board = new Tetris(10, 10);
   key = (char) ('0' + rand() % board->get_numTypes());
   board->accept(key);
@@ -310,7 +202,6 @@ int main(int argc, char *argv[]) {
   }
 
   delete board;
-
   Tetris::deinit();
   cout << "(nAlloc, nFree) = (" << Matrix::get_nAlloc() << ',' << Matrix::get_nFree() << ")" << endl;  
   cout << "Program terminated!" << endl;
