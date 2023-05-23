@@ -240,11 +240,67 @@ public:
     }
 };
 
+Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int left, int dw)
+{
+  Matrix *line, *bline, *zero, *czero;
+  int *rdel, *cdel;
+  int cy, y, cx ,x, r, c;
+  int nScanned, cnScanned;
+  int ws_dy = screen->get_dy() - 2*dw;
+  int ws_dx = screen->get_dx() - 2*dw;
+
+  if (top + blk->get_dy() > ws_dy + dw)
+    nScanned = ws_dy + dw - top;
+  else
+    nScanned = blk->get_dy();
+  
+  rdel=new int[nScanned];
+  zero = new Matrix(1, ws_dx);
+  for(y=nScanned-1; y>=0; y--){
+    cy = top + y;
+    line = screen->clip(cy, dw, cy+1, dw + ws_dx);
+    bline = line->int2bool(); // binary version of line
+    delete line;
+    if (bline->sum() == ws_dy) rdel[y]=cy;
+    else rdel[y]=-1;
+    delete bline;
+  }
+     
+
+  if (left + blk->get_dx() > ws_dx+ dw)
+    cnScanned = ws_dx + dw - left;
+  else
+    cnScanned = blk->get_dx();
+
+  cdel=new int[cnScanned];
+  czero=new Matrix(ws_dx, 1);
+  for (x=cnScanned-1; x>=0; x--){
+    cx=left+x;
+    line=screen->clip(dw, cx, dw+ws_dy, cx+1);
+    bline=line->int2bool();
+    delete line;
+    if (bline->sum() == ws_dy) cdel[x]=cx;
+    else cdel[x]=-1;
+    delete bline;
+  }
+
+  for (int i=0; i<nScanned; i++){
+    if (rdel[i]!=-1) screen->paste(zero, rdel[i], dw); 
+  }
+  delete zero;
+
+  for (int i=0; i<cnScanned; i++){
+    if (cdel[i] != -1) screen->paste(czero, dw, cdel[i]);
+  }
+  delete czero;
+  return screen;
+}
+
 class MyOnNewBlock : public ActionHandler {
 public:
     void run(Tetris *t, char key) {
         if (t->currBlk != NULL) // why test currBlk != NULL?
-            t->oScreen = deleteFullLines(t->oScreen, t->currBlk, t->top, t->wallDepth);
+            t->oScreen = myDeleteFullLines(t->oScreen, t->currBlk, t->top, t->left, t->wallDepth);
         t->iScreen->paste(t->oScreen, 0, 0);
         // select a new block
         t->type = key - '0';
@@ -255,16 +311,6 @@ public:
         return;
     }    
 };
-
-Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int dw){
-  Matrix *line, *bline, *zero, *temp;
-  int cy, y;
-  int nDeleted, nScanned;
-  int ws_dy = screen->get_dy() - 2*dw;
-  int ws_dx = screen->get_dx() - 2*dw;
-
-  
-}
 
 int main(int argc, char *argv[]) {
   char key;
