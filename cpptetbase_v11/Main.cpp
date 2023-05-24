@@ -229,7 +229,6 @@ public:
 Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int left, int dw)
 {
   Matrix *line, *bline, *zero, *czero;
-  int *rdel, *cdel;
   int cy, y, cx ,x;
   int nScanned, cnScanned;
   int ws_dy = screen->get_dy() - 2*dw;
@@ -238,47 +237,47 @@ Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int left, int dw
   if (top + blk->get_dy() > ws_dy + dw)
     nScanned = ws_dy + dw - top;
   else
-    nScanned = blk->get_dy();
-  
-  rdel=new int[nScanned];
+    nScanned = blk->get_dy();  
+
+  int del[ws_dy]; //delete row number accept
+
   zero = new Matrix(1, ws_dx);
-  for(y=nScanned-1; y>=0; y--){
+  for (y = nScanned - 1; y >= 0; y--) {
     cy = top + y;
     line = screen->clip(cy, dw, cy+1, dw + ws_dx);
     bline = line->int2bool(); // binary version of line
     delete line;
-    if (bline->sum() == ws_dy) rdel[y]=cy;
-    else rdel[y]=-1;
-    delete bline;
+    if (bline->sum() == ws_dx) 
+      del[cy-dw]=1;
+    else del[cy-dw]=0;
+    delete bline; 
   }
-     
 
   if (left + blk->get_dx() > ws_dx+ dw)
     cnScanned = ws_dx + dw - left;
   else
     cnScanned = blk->get_dx();
-
-  cdel=new int[cnScanned];
-  czero=new Matrix(ws_dx, 1);
-  for (x=cnScanned-1; x>=0; x--){
+  
+  czero = new Matrix (ws_dy, 1);
+  for (x= cnScanned-1; x>=0; x--){
     cx=left+x;
     line=screen->clip(dw, cx, dw+ws_dy, cx+1);
     bline=line->int2bool();
     delete line;
-    if (bline->sum() == ws_dy) cdel[x]=cx;
-    else cdel[x]=-1;
+    if (bline->sum() == ws_dy){
+      screen->paste(czero, dw, cx);
+    }
     delete bline;
   }
+  delete czero;
 
-  for (int i=0; i<nScanned; i++){
-    if (rdel[i]!=-1) screen->paste(zero, rdel[i], dw); 
+  int i;
+  for (i=ws_dx-1; i>=0; i--){
+    if (del[i]==1){
+      screen->paste(zero, i+dw, dw);
+    }
   }
   delete zero;
-
-  for (int i=0; i<cnScanned; i++){
-    if (cdel[i]!=-1) screen->paste(czero, dw, cdel[i]);
-  }
-  delete czero;
   return screen;
 }
 
