@@ -173,7 +173,7 @@ void drawScreen(Matrix *screen, int wall_depth)
       else if (array[y][x] == 70)
 	      cout << "♥ ";
       else
-	      cout << "XX";
+	      cout << "XX ";
     }
     string digit = "0" + to_string(y-dw) + " ";
     cout << digit << endl;
@@ -183,7 +183,6 @@ void drawScreen(Matrix *screen, int wall_depth)
 /**************************************************************/
 /******************** Tetris Main Loop ************************/
 /**************************************************************/
-
 class MyOnLeft : public ActionHandler {
 public:
     void run(Tetris *t, char key) {
@@ -196,7 +195,7 @@ public:
 class MyOnRight : public ActionHandler {
 public:
     void run(Tetris *t, char key) {
-        if (t->left<14)
+        if (t->left<(t->rows - t->wallDepth))
           t->left++;
         return;
     }
@@ -205,7 +204,7 @@ public:
 class MyOnDown : public ActionHandler{
 public:
     void run(Tetris *t, char key){
-      if (t->top<14)
+      if (t->top<(t->cols - t->wallDepth))
         t->top++;
       return;
     }
@@ -216,19 +215,6 @@ public:
     void run(Tetris *t, char ket){
       if (t->top>0)
         t->top--;
-      return;
-    }
-};
-
-class MyOnFix : public ActionHandler{
-public:
-    void run(Tetris *t, char key){
-      Matrix *tempBlk;
-      tempBlk = t->overlap_currBlk();
-      if (anyConflict(tempBlk) == true){
-        delete tempBlk;
-      }
-      delete tempBlk;
       return;
     }
 };
@@ -290,7 +276,7 @@ Matrix *myDeleteFullLines(Matrix *screen, Matrix *blk, int top, int left, int dw
   delete zero;
 
   for (int i=0; i<cnScanned; i++){
-    if (cdel[i] != -1) screen->paste(czero, dw, cdel[i]);
+    if (cdel[i]!=-1) screen->paste(czero, dw, cdel[i]);
   }
   delete czero;
   return screen;
@@ -314,7 +300,7 @@ public:
 
 int main(int argc, char *argv[]) {
   char key;
-  // registerAlarm(); // register one-second timer
+  //registerAlarm(); // register one-second timer
   srand((unsigned int)time(NULL)); // init the random number generator
   
   TetrisState state;
@@ -326,9 +312,9 @@ int main(int argc, char *argv[]) {
   Tetris::setOperation('a', TetrisState::Running, new MyOnLeft(),    TetrisState::Running, new MyDummy(), TetrisState::Running);
   Tetris::setOperation('d', TetrisState::Running, new MyOnRight(), TetrisState::Running, new MyDummy(),    TetrisState::Running);
   Tetris::setOperation('s', TetrisState::Running, new MyOnDown(), TetrisState::Running, new MyDummy(),     TetrisState::Running);
-  Tetris::setOperation('w', TetrisState::Running,  new OnClockWise(),    TetrisState::Running, new MyDummy(),  TetrisState::Running);
   Tetris::setOperation('e', TetrisState::Running, new MyOnUp(), TetrisState::Running, new MyDummy(),     TetrisState::Running);
-  Tetris::setOperation(' ', TetrisState::Running, new MyOnFix(),   TetrisState::NewBlock, new OnFinished(),     TetrisState::Running);
+  Tetris::setOperation('w', TetrisState::Running,  new OnClockWise(),    TetrisState::Running, new MyDummy(),  TetrisState::Running);
+  Tetris::setOperation(' ', TetrisState::Running, new MyDummy(),   TetrisState::NewBlock, new MyDummy(),     TetrisState::Running);
   Tetris::setOperation('0', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
   Tetris::setOperation('1', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
   Tetris::setOperation('2', TetrisState::NewBlock, new MyOnNewBlock(), TetrisState::Running, new OnFinished(), TetrisState::Finished);
